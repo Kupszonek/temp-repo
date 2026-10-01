@@ -10,7 +10,8 @@
 
 :80 {
     handle /api/* {
-        reverse_proxy localhost:3001
+        # Use 127.0.0.1 explicitly; localhost may resolve to ::1, which the app does not bind to.
+        reverse_proxy 127.0.0.1:3001
     }
-    reverse_proxy * localhost:3000
+    reverse_proxy * 127.0.0.1:3000
 }

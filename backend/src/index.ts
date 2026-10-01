@@ -82,6 +82,7 @@ app.delete("/api/product/:id", async (req, res) => {
 });
 
 const port = Number(process.env.PORT ?? 3001);
-app.listen(port, "0.0.0.0", () => {
-  console.log(`Server running on http://0.0.0.0:${port}`);
+const host = process.env.HOST ?? "127.0.0.1";
+app.listen(port, host, () => {
+  console.log(`Server running on http://${host}:${port}`);
 });
