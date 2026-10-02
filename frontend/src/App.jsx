@@ -68,7 +68,7 @@ export default function App() {
       />
 
       <footer style={{ marginTop: "40px", paddingTop: "20px", borderTop: "1px solid #ccc" }}>
-        <h3>Zespół: {teamInfo.teamName || "Ładowanie..."}</h3>
+        <h3>Team: {teamInfo.teamName || "Loading..."}</h3>
         <ul>
           {teamInfo.members.map((member, index) => (
             <li key={index}>
