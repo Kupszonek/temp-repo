@@ -7,6 +7,8 @@ export default function App() {
   const [products, setProducts] = useState([]);
   const [editingProduct, setEditingProduct] = useState(null);
 
+  const [apiStatus, setApiStatus] = useState("Loading...");
+
   async function loadProducts() {
     try {
       const data = await getProducts();
@@ -18,6 +20,18 @@ export default function App() {
 
   useEffect(() => {
     loadProducts();
+
+    fetch("/api/v1/health")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "ok") {
+          setApiStatus("OK");
+        }
+      })
+      .catch((e) => {
+        console.error("Failed to fetch health status:", e);
+        setApiStatus("Error");
+      });
   }, []);
 
   async function handleCreate(product) {
@@ -39,6 +53,8 @@ export default function App() {
   return (
     <div>
       <h1>Think different Academy</h1>
+      
+      <p>Status: {apiStatus}</p>
 
       <ProductForm
         onSubmit={editingProduct ? (p) => handleUpdate(editingProduct.id, p) : handleCreate}

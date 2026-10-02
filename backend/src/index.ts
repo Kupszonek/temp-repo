@@ -81,6 +81,10 @@ app.delete("/api/product/:id", async (req, res) => {
   res.json({ message: "Product was deleted permanently from DB." });
 });
 
+app.get("/api/v1/health", (_req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
 const port = Number(process.env.PORT ?? 3001);
 const host = process.env.HOST ?? "127.0.0.1";
 app.listen(port, host, () => {
