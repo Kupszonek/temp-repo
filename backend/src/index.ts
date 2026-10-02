@@ -90,3 +90,52 @@ const host = process.env.HOST ?? "127.0.0.1";
 app.listen(port, host, () => {
   console.log(`Server running on http://${host}:${port}`);
 });
+
+async function initTeamTable() {
+  try {
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS team_members (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        team_name VARCHAR(100) NOT NULL,
+        first_name VARCHAR(100) NOT NULL,
+        last_name VARCHAR(100) NOT NULL
+      )
+    `);
+
+    const [rows]: any = await db.query("SELECT COUNT(*) as count FROM team_members");
+    
+    if (rows[0].count === 0) {
+      await db.query(`
+        INSERT INTO team_members (team_name, first_name, last_name) VALUES
+        ('Pink Bears', 'Jakub', 'Sroka'),
+        ('Pink Bears', 'Dawid', 'Zygmunt'),
+        ('Pink Bears', 'Kuba', 'Kucharczak')
+      `);
+      console.log("Added team members to database.");
+    }
+  } catch (err) {
+    console.error("Error:", err);
+  }
+}
+initTeamTable();
+
+app.get("/api/v1/team", async (_req, res) => {
+  try {
+    const [rows]: any = await db.query("SELECT team_name, first_name, last_name FROM team_members");
+    
+    if (!rows || rows.length === 0) {
+      return res.json({ teamName: "No data", members: [] });
+    }
+
+    const teamName = rows[0].team_name;
+    const members = rows.map((row: any) => ({
+      firstName: row.first_name,
+      lastName: row.last_name,
+    }));
+
+    res.status(200).json({ teamName, members });
+  } catch (err) {
+    console.error("Error reading from database:", err);
+    res.status(500).json({ error: "Database error" });
+  }
+});
